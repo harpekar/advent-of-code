@@ -1,18 +1,17 @@
 use std::fs::File; 
-use std::io::{self,BufReader};
-use std::io::prelude::*;
+use std::io::{BufRead,BufReader};
 
 fn main() {
 
-    let total_fuel = 0; 
+    let mut total_fuel = 0f64; 
 
-    let masses = File::open("masses.txt")?;
-    let masses = BufReader::new(masses);
+    let f = File::open("./masses.txt").expect("Unable to open file");
+    let masses = BufReader::new(f);
 
     for mass in masses.lines() {
-        let mass_int = mass.parse::<u32>();
-        let total_fuel = total_fuel + (mass_int / 3).floor() - 2;
+        let mass_int = mass.unwrap().parse::<f64>();
+        total_fuel += (mass_int.unwrap() / 3f64).floor() - 2f64;
     }
 
-   print!("{}", total_fuel); 
+   print!("{} \n", total_fuel); 
 }
