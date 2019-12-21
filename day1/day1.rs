@@ -1,26 +1,27 @@
-use std::fs::File; 
-use std::io::{BufRead,BufReader};
+use std::fs; 
 
 fn main() {
 
     let mut total_fuel = 0f64; 
 
-    let f = File::open("./masses.txt").expect("Unable to open file");
-    let masses = BufReader::new(f);
+    let f = fs::read_to_string("./masses.txt").unwrap(); //.expect("Unable to open file");
+    //let masses = BufReader::new(f);
 
-    for mass in masses.lines() {
-        let mass_int = mass.unwrap().parse::<f64>();
-        total_fuel += (mass_int.unwrap() / 3f64).floor() - 2f64; //Total fuel for the ship itself
+    for mass in f.lines() {
+        let mod_mass = mass.parse::<f64>().unwrap();
+        let mut addn_fuel = 0f64;
+
+        let mut mod_fuel = (mod_mass / 3f64).floor() - 2f64; //Fuel calculation for the module mass only
+
+        while mod_fuel >= 0f64 { // Calculate additional fuel for fuel
+            addn_fuel += mod_fuel;
+            mod_fuel = (mod_fuel / 3f64).floor() - 2f64;
+        }
+
+        total_fuel += addn_fuel; //Total fuel for the ship
+    
     }
 
     print!("Total ship fuel is {} \n", total_fuel); 
 
-    let mut addn_fuel = total_fuel;
-
-    while addn_fuel >= 0f64 {
-        addn_fuel = (addn_fuel / 3f64).floor() - 2f64;
-        total_fuel += addn_fuel;
-    }
-
-    print!("Total ship fuel including fuel is {} \n", total_fuel); //Total  
 }
